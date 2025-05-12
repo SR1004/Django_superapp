@@ -209,7 +209,7 @@ def weather(request):
     weather_data = None
     if request.method == "POST":
         city = request.POST.get("city")
-        api_key = "2d84429e6228c1ff68904c8869c1dab9"  
+        api_key = "/your api key/"  
         url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"   
         response = requests.get(url)
         if response.status_code == 200:
