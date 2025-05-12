@@ -1,0 +1,39 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        table,td{
+            width: 900px;
+            border: 2px solid color=rgb(0, 0, 0);
+            background-color: aquamarine;
+            padding: 10px 25px 10px 25px;
+        }
+        th{
+            width: 300px;
+            border: 12px solid color=black;
+            background-color:aquamarine;
+            padding: 10px 25px 10px 25px;
+        }
+        .center{
+            margin-left: 7%;
+            justify-content: space-evenly;
+            padding:10px 20px;
+            width: 1200px;
+            text-align: center;
+                            
+        }
+    </style>     
+        <div class="center">
+            <table class="table table-bordered">
+            <h2><center><b>Study Details</b></center></h2><hr>
+            <tr><th><b>Study Name: </b></th><td>{{data.Study_Name}}</td></tr>
+            <tr><th><b>Study Description: </b></th><td>{{data.Study_Description}}</td></tr>
+            <tr><th><b>Study Phase: </b></th><td>{{data.Study_Phase}}</td></tr>
+            <tr><th><b>Sponsor Name: </b></th><td>{{data.Sponser_Name}}</td></tr>
+            </table>
+            <div style="display: flex;justify-content: space-evenly;">
+                <a class="btn btn-danger btn-flex" style="width: 300px; margin-top: 30px;text-align: center;" href="/">Cancel</a><br>
+                <a class="btn btn-danger btn-flex" style="width:200px" href="/datamanage/">Database</a><br>
+            </div>
+        </div>
+{% endblock %}

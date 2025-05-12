@@ -1,0 +1,35 @@
+ h1{ 
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+.button-container{
+    display: flex;
+    width: 300px;
+    justify-content: space-between;
+    padding: 10px;
+    
+}
+.info{
+    background-color: aqua;
+    top: 50px;
+    border: 3px solid;
+    padding: 25px;
+    height: auto;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+}
+.form{
+    background-color: chartreuse;
+}
+table,th,td{
+    border: 2px solid color=black;
+    background-color: aquamarine;
+    padding: 25px;
+}
+.bruh{
+    display:flex;
+    justify-content:space-evenly;
+} 

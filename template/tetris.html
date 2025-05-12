@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Tetris</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; background: #222; color: white; }
+        canvas { background: black; display: block; margin: auto; border: 2px solid white; }
+        h2 { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Simple Tetris</h1>
+    <h2>Score: <span id="score">0</span></h2>
+    <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById("tetrisCanvas");
+        const ctx = canvas.getContext("2d");
+        const ROWS = 20, COLS = 10, BLOCK_SIZE = 30;
+        let board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+        let score = 0;
+
+        const pieces = [
+            [[1, 1, 1, 1]], // I
+            [[1, 1], [1, 1]], // O
+            [[0, 1, 0], [1, 1, 1]], // T
+            [[1, 1, 0], [0, 1, 1]], // Z
+            [[0, 1, 1], [1, 1, 0]], // S
+            [[1, 0, 0], [1, 1, 1]], // L
+            [[0, 0, 1], [1, 1, 1]]  // J
+        ];
+        
+        let currentPiece = getRandomPiece();
+        let dropCounter = 0;
+        let lastTime = 0;
+        
+        function getRandomPiece() {
+            return { shape: pieces[Math.floor(Math.random() * pieces.length)], x: 3, y: 0 };
+        }
+        
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            board.forEach((row, y) => row.forEach((value, x) => {
+                if (value) {
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                    ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                }
+            }));
+        }
+        
+        function drawPiece() {
+            ctx.fillStyle = "red";
+            currentPiece.shape.forEach((row, y) => row.forEach((value, x) => {
+                if (value) {
+                    ctx.fillRect((currentPiece.x + x) * BLOCK_SIZE, (currentPiece.y + y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                    ctx.strokeRect((currentPiece.x + x) * BLOCK_SIZE, (currentPiece.y + y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                }
+            }));
+        }
+        
+        function movePiece(dir) {
+            currentPiece.x += dir;
+        }
+        
+        function dropPiece() {
+            currentPiece.y++;
+            if (collision()) {
+                currentPiece.y--;
+                mergePiece();
+                clearRows();
+                currentPiece = getRandomPiece();
+            }
+        }
+        
+        function collision() {
+            return currentPiece.shape.some((row, y) => row.some((value, x) => {
+                let newX = currentPiece.x + x;
+                let newY = currentPiece.y + y;
+                return value && (newY >= ROWS || board[newY][newX]);
+            }));
+        }
+        
+        function mergePiece() {
+            currentPiece.shape.forEach((row, y) => row.forEach((value, x) => {
+                if (value) board[currentPiece.y + y][currentPiece.x + x] = 1;
+            }));
+        }
+        
+        function clearRows() {
+            for (let y = ROWS - 1; y >= 0; y--) {
+                if (board[y].every(value => value === 1)) {
+                    board.splice(y, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    score += 10;
+                    document.getElementById("score").innerText = score;
+                }
+            }
+        }
+        
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft" && currentPiece.x > 0) movePiece(-1);
+            if (e.key === "ArrowRight" && currentPiece.x < COLS - currentPiece.shape[0].length) movePiece(1);
+            if (e.key === "ArrowDown") dropPiece();
+        });
+        
+        function update(time = 0) {
+            let deltaTime = time - lastTime;
+            lastTime = time;
+            dropCounter += deltaTime;
+            if (dropCounter > 500) {
+                dropPiece();
+                dropCounter = 0;
+            }
+            drawBoard();
+            drawPiece();
+            requestAnimationFrame(update);
+        }
+        
+        update();
+    </script>
+         <button class="btn btn-danger btn-flex" style="width:200px" onclick="window.location.href = '/';">Home</button>
+</body>
+</html>

@@ -1,0 +1,98 @@
+{% extends 'index.html' %}
+{% block content %}
+{% load static %}
+{% load text_filters %}
+<link rel="stylesheet" href="style.css">
+            <div class="container-fluid" name="margin-top:50px;">
+                <div class="col-md-offset-3 col-md-6">
+                    <h3 class="page-header text-primary text-center"><i class='fa fa-database'> Study Management</i></h3>
+                          
+                            <style>
+                                th{
+                                    border: 2px solid color=rgb(0, 0, 0);
+                                    background-color: rgb(5, 160, 108);
+                                    padding: 10px 25px 10px 25px;
+                                    min-width: 100px;
+                                    margin-left: 20px;
+                                    text-align: center;
+                                }
+                                td{
+                                    text-align: center;
+                                    background-color: aquamarine;
+                                }
+                                .button-container{
+                                    display: flex;
+                                    justify-content: space-between;
+                                }
+                                .btn{
+                                    flex: 2;
+                                    margin: 0 10px;
+                                }
+                                
+                                input [type="checkbox"]{
+                                    width:20px;
+                                    height:30px;
+                                }
+                                .center{
+                                    margin-left:10px;
+                                    margin-right: 19px;
+                                    max-width: 1200px;
+                                }
+                            </style>
+                            <form method="POST" action="{% url 'delete_data' %}">
+                            {% csrf_token %}
+                            <div class="center">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" onclick="document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = this.checked)"></th>
+                                            <th>Study Name</th>
+                                            <th>Study Description</th>
+                                            <th>Study Phase</th>
+                                            <th>Sponser Name</th>
+                                            <th>Update</th>
+                                            <th>View</th>
+                                        </tr>
+                                    </thead>
+                                    {% for mydata in data %}
+                                            <tbody>
+                                                <tr>
+                                                    <td><input type="checkbox" class="row-checkbox" name="selected_studies" value="{{ mydata.id }}"></td>
+                                                    <td>{{mydata.Study_Name}}</td>
+                                                    <td>{{mydata.Study_Description|truncate_words:5}}</td>
+                                                    <td>{{mydata.Study_Phase}}</td>
+                                                    <td>{{mydata.Sponser_Name}}</td>
+                                                    <td class="center"><a class="btn btn-primary" href='/datamanage/update/{{mydata.id}}'>Update</a></td>
+                                                    <td class="center"><a class="btn btn-primary" href='/datamanage/output/{{mydata.id}}'>View</a></td>
+                                                    
+                                                </tr>
+                                            </tbody>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <div style='display: flex;'>
+                            
+                                <a class="btn btn-success btn-flex" style="width: 200px;" href="/datamanage/insert/">Insert</a><br><br>
+                                <button type="submit" class="btn btn-danger btn-flex"  href="/datamanage/delete/">Delete</button><br>
+                                <a class="btn btn-danger btn-flex" style="width:200px" href="/">Home</a><br>
+
+                            </div>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if messages.tags == 'error' %}
+                                        <div class="alert alert-error">
+                                            {{message}}
+                                        </div>
+                                    {% else %}
+                                    <div class="alert alert-{{message.tags}}" style="width: 600px" text-align: center>
+                                        {{message}}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            </form>
+                </div>
+            </div>
+            
+{% endblock %}
+        

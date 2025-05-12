@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Order</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <style>
+        /* General Page Styles */
+body {
+    background: linear-gradient(to right, #FF7E5F, #FE4A49);
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+}
+
+/* Search Bar */
+#searchbar {
+    width: 60%;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 25px;
+    border: none;
+    margin: 20px auto;
+    display: block;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Food List */
+.food-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* Food Item */
+.food-item {
+    background:rgb(230, 160, 11);
+    padding: 20px;
+    border-radius: 12px;
+    width: 350px;
+    text-align: center;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.food-item:hover {
+    transform: scale(1.05);
+}
+
+.food-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+button {
+    background:green;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background:darkgreen;
+}
+
+/* Modal for More Info */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 10px;
+    text-align: center;
+    color: black;
+}
+
+.close {
+    color: red;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Centered Order Summary */
+#orderSummary {
+    background: white;
+    padding: 20px;
+    width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    text-align: center;
+    color: black;
+}
+
+#orderList {
+    text-align: left;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#checkoutBtn {
+    width: 100%;
+    background: green;
+    margin-top: 10px;
+}
+
+#checkoutBtn:hover {
+    background: darkgreen;
+}
+    </style>
+
+    <input type="text" id="searchbar" placeholder="Search food..." onkeyup="searchFood()">
+
+    <div id="foodList" class="food-list"></div>
+
+    <!-- Modal for More Info -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Order Summary Section -->
+    <div id="orderSummary" style="display: none;">
+        <h2>Order Summary</h2>
+        <ul id="orderList"></ul>
+        <button id="checkoutBtn" onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        const foods = [
+    {
+        name: "Thattu Idly",
+        image: "image\thattu_idly.jpg",
+        description: "A famous and hygienic dish from Tamil Nadu.",
+        price: "Rs. 20/-",
+        location: "Chennai, Tamil Nadu",
+        rating: 5
+    },
+    {
+        name: "Kalan",
+        image: "image/kalan.jpg",
+        description: "Tasty and fresh, available at an affordable price.",
+        price: "Rs. 30/-",
+        location: "Mylapore, Chennai",
+        rating: 4
+    },
+    {
+        name: "Parota",
+        image: "image/parota.jpg",
+        description: "A crispy and layered delight from South India.",
+        price: "Rs. 15/-",
+        location: "Coimbatore, Tamil Nadu",
+        rating: 5
+    }
+];
+
+const foodList = document.getElementById("foodList");
+const orderList = document.getElementById("orderList");
+const orderSummary = document.getElementById("orderSummary");
+
+// Populate the food list dynamically
+foods.forEach((food, index) => {
+    let foodItem = document.createElement("div");
+    foodItem.className = "food-item";
+    foodItem.innerHTML = `
+        <img src="${food.image}" alt="${food.name}">
+        <h2>${food.name}</h2>
+        <p>${food.description}</p>
+        <div class="stars">${"★".repeat(food.rating)}${"☆".repeat(5 - food.rating)}</div>
+        <h3>${food.price}</h3>
+        <div class="button-group">
+            <button onclick="openModal(${index})">More Info</button>
+            <button onclick="orderFood('${food.name}', '${food.price}')">Order</button>
+        </div>
+    `;
+    foodList.appendChild(foodItem);
+});
+
+// Show More Info Modal
+function openModal(index) {
+    const modal = document.getElementById("modal");
+    const modalBody = document.getElementById("modal-body");
+
+    modalBody.innerHTML = `
+        <h2>${foods[index].name}</h2>
+        <img src="${foods[index].image}" alt="${foods[index].name}" style="width: 100%; height: 200px; border-radius: 10px;">
+        <p>${foods[index].description}</p>
+        <h3>${foods[index].price}</h3>
+        <p>Available at: ${foods[index].location}</p>
+    `;
+
+    modal.style.display = "block";
+}
+
+// Close Modal
+function closeModal() {
+    document.getElementById("modal").style.display = "none";
+}
+
+// Search Food Functionality
+function searchFood() {
+    let input = document.getElementById("searchbar").value.toLowerCase();
+    let items = document.getElementsByClassName("food-item");
+
+    for (let i = 0; i < items.length; i++) {
+        let name = foods[i].name.toLowerCase();
+        items[i].style.display = name.includes(input) ? "block" : "none";
+    }
+}
+
+// Add food to order summary
+function orderFood(foodName, foodPrice) {
+    let orderItem = document.createElement("li");
+    orderItem.innerHTML = `${foodName} - <b>${foodPrice}</b>`;
+    orderList.appendChild(orderItem);
+    orderSummary.style.display = "block";
+}
+
+// Checkout Button
+function checkout() {
+    alert("Your order has been placed! Thank you for ordering.");
+    orderList.innerHTML = "";
+    orderSummary.style.display = "none";
+}
+</script>
+         <button class="btn btn-danger btn-flex" style="width:200px" onclick="window.location.href = '/';">Home</button>
+</body>
+</html>

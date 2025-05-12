@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Web App</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/calendar.js' %}"></script>
+    <script src="{% static 'jquery/jquery.min.js' %}"></script>
+    
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="calendar">
+            <div class="header">
+                <button id="prevMonth">&lt;</button>
+                <h2 id="currentMonth"></h2>
+                <button id="nextMonth">&gt;</button>
+            </div>
+            <div class="days-grid" id="daysGrid"></div>
+        </div>
+        <div class="clock" id="clock"></div><br>
+         <button class="btn btn-danger btn-flex" style="width:200px" onclick="window.location.href = '/';">Home</button>
+    </div>
+
+
+    <!-- Popup for adding notes and alarms -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close" id="closePopup">&times;</span>
+            <h3>Add Note and Alarm</h3>
+            <textarea id="noteInput" placeholder="Add a note..."></textarea>
+            <input type="datetime-local" id="alarmInput">
+            <button id="saveNote">Save</button>
+        </div>
+    </div>
+
+    <!-- Alarm Notification Popup -->
+    <div id="alarmPopup" class="popup">
+        <div class="popup-content">
+            <h3>Alarm!</h3>
+            <p id="alarmMessage"></p>
+            <button id="closeAlarm">Close</button>
+        </div>
+    </div>
+
+    <script>document.addEventListener('DOMContentLoaded', function () {
+        const daysGrid = document.getElementById('daysGrid');
+        const currentMonthElement = document.getElementById('currentMonth');
+        const prevMonthButton = document.getElementById('prevMonth');
+        const nextMonthButton = document.getElementById('nextMonth');
+        const popup = document.getElementById('popup');
+        const closePopup = document.getElementById('closePopup');
+        const saveNoteButton = document.getElementById('saveNote');
+        const noteInput = document.getElementById('noteInput');
+        const alarmInput = document.getElementById('alarmInput');
+        const clock = document.getElementById('clock');
+        const alarmPopup = document.getElementById('alarmPopup');
+        const closeAlarm = document.getElementById('closeAlarm');
+        const alarmMessage = document.getElementById('alarmMessage');
+    
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+    
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+        function renderCalendar(month, year) {
+            daysGrid.innerHTML = '';
+            currentMonthElement.textContent = `${months[month]} ${year}`;
+    
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+    
+            for (let i = 0; i < startingDay; i++) {
+                daysGrid.innerHTML += `<div class="day"></div>`;
+            }
+    
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('day');
+                dayElement.textContent = i;
+    
+                // Check if a note exists for this date
+                const noteKey = `note-${i}-${month}-${year}`;
+                const note = localStorage.getItem(noteKey);
+                if (note) {
+                    dayElement.style.backgroundColor = '#ffeb3b'; // Yellow background for dates with notes
+                }
+    
+                dayElement.addEventListener('click', () => openPopup(i, month, year));
+                daysGrid.appendChild(dayElement);
+            }
+        }
+    
+        function openPopup(day, month, year) {
+            popup.style.display = 'flex';
+            saveNoteButton.onclick = () => saveNote(day, month, year);
+        }
+    
+        function saveNote(day, month, year) {
+            const note = noteInput.value;
+            const alarmTime = new Date(alarmInput.value);
+    
+            if (note) {
+                localStorage.setItem(`note-${day}-${month}-${year}`, note);
+            }
+    
+            if (alarmTime) {
+                const now = new Date();
+                const timeDiff = alarmTime - now;
+    
+                if (timeDiff > 0) {
+                    setTimeout(() => {
+                        alarmMessage.textContent = `Alarm for ${day}/${month + 1}/${year}: ${note}`;
+                        alarmPopup.style.display = 'flex';
+                    }, timeDiff);
+                }
+            }
+    
+            popup.style.display = 'none';
+            noteInput.value = '';
+            alarmInput.value = '';
+            renderCalendar(currentMonth, currentYear); // Re-render the calendar to update the color
+        }
+    
+        function updateClock() {
+            const now = new Date();
+            const date = now.toLocaleDateString();
+            const time = now.toLocaleTimeString();
+            clock.textContent = `${date} ${time}`;
+        }
+    
+        closePopup.onclick = () => popup.style.display = 'none';
+        closeAlarm.onclick = () => alarmPopup.style.display = 'none';
+    
+        prevMonthButton.onclick = () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar(currentMonth, currentYear);
+        };
+    
+        nextMonthButton.onclick = () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+        };
+    
+        setInterval(updateClock, 1000);
+        renderCalendar(currentMonth, currentYear);
+    });</script>
+</body>
+</html>

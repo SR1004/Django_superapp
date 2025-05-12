@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Charts</title>
+</head>
+<body>
+    <h2>Stock Market Prices</h2>
+    
+    <label for="stock-select">Choose a stock:</label>
+    <select id="stock-select" onchange="changeStock()">
+        {% for stock in stocks %}
+            <option value="{{ stock }}" {% if stock == request.GET.symbol %}selected{% endif %}>{{ stock }}</option>
+        {% endfor %}
+    </select>
+
+    <div>{{ chart|safe }}</div>
+    <center><button class="btn btn-danger btn-flex" onclick="window.location.href = '/';">Home</button></center>
+
+
+    <script>
+        function changeStock() {
+            let selectedStock = document.getElementById("stock-select").value;
+            window.location.href = `/stock/${selectedStock}/`;
+        }
+    </script>
+</body>
+</html>

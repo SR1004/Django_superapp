@@ -1,0 +1,40 @@
+{% extends "index.html" %} 
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="style.css">
+    <div class="container-fluid" name="margin-top:50px;">
+        <div class="col-md-offset-4 col-md-4">
+            <form action="/datamanage/update/{{data.id}}/" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <h3 class="page-header text-primary text-center"><i class='fa fa-edit'></i>Update</h3>
+                <div class="form-group">
+                    <label>Study Name</label>
+                    <input type="text" class="form-control" value="{{data.Study_Name}}" name="Study_Name">
+                </div>
+                <div class="form-group">
+                    <label>Study_Description</label>
+                    <textarea class="form-control" rows="5" cols="60" value="{{data.Study_Description}}" name="Study_Description">{{data.Study_Description}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Study Phase</label>
+                    <select id="Study_Phase" name="Study_Phase">
+                        <option value="Phase I">Phase I</option>
+                        <option value="Phase II">Phase II</option>
+                        <option value="Phase III">Phase III</option>
+                        <option value="Phase IV">Phase IV</option>
+                    </select>
+                    
+                </div>
+                <div class="form-group">
+                    <label>Sponser Name</label>
+                    <input type="text" class="form-control" value="{{data.Sponser_Name}}" name="Sponser_Name">
+                </div>
+                <div class="from-groups">
+                    <input type="submit" value="Update" style='width:200px' class="btn btn-success btn-flex">
+                    <a class="btn btn-danger btn-flex" style="width: 200px;" href="/">Cancel</a><br>
+                    <a class="btn btn-danger btn-flex" style="width:200px" href="/datamanage/">Database</a><br>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="container-fluid" name="margin-top:50px;">
+    <div class="col-md-offset-4 col-md-4">
+        <h2 class="text-primary text-center"><i class='fa fa-users'></i>Register</h2>
+          <form method="POST">
+            {% csrf_token %}
+            <table>
+              {% for field in form %}
+              <tr>
+                  <th>{{field.label_tag}}</th>
+                  <td>{{field}}<br></td>
+              </tr>
+              {% endfor %}
+          </table>
+            <div class="button-container">
+              <input type="submit" value="Register"  style="width:200px" class="btn btn-success btn-flex"><br>
+              <a class="btn btn-danger btn-flex" style="width:200px" href="/">Cancel</a><br>
+              <a class="btn btn-danger btn-flex" style="width:200px" href="/datamanage/">Database</a><br>
+            </div>
+          </form>
+    </div>
+</div>
+
+{% endblock %}

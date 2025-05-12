@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>Expense Tracker</title>
+</head>
+<body>
+    <style>
+        body {
+    display: flex;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    margin-top: 30px;
+    background: linear-gradient(to right, #84a4e9,#e780b0);
+}
+h1, h2 {
+    color: #333;
+}
+form {
+    margin-top: 20px;
+    margin: 20px 0;
+    padding: 10px;
+}
+input, button {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+button {
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #218838;
+}
+table {
+    width: 70%;
+    margin: auto;
+    border-collapse: collapse;
+    background: white;
+}
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+th {
+    background-color: #007bff;
+    color: white;
+}
+.btn-danger {
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+.btn-danger:hover {
+    background-color: darkred;
+}
+#outer{
+    background-color: rgb(194, 215, 238,0.3);
+    width: 50%;
+    border-radius: 10px;
+    margin-bottom: 50px;
+    box-shadow: 0px 0px 10px black;
+}
+input{
+    box-shadow: inset 0px 0px 8px gray;
+}
+    </style>
+     <div id="outer">
+    <h1>Expense Tracker</h1>
+    
+    <h2>Set Balance</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="set_balance" value="true">
+        <input type="number" name="balance" placeholder="Enter starting balance" required>
+        <button type="submit">Set Balance</button>
+    </form>
+    <h2>Current Balance: ${{ balance }}</h2>
+    <h2>Add Expense</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Expense Name" required>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <button type="submit">Add Expense</button>
+    </form>
+    <h2>Expenses</h2>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Actions</th>
+        </tr>
+        {% for name, amount in expenses %}
+        <tr>
+            <td>{{ name }}</td>
+            <td>${{ amount }}</td>
+            <td>
+                <form method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="remove_expense" value="{{ forloop.counter0 }}">
+                    <button type="submit">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="reset" value="true">
+        <button type="submit">Reset All</button>
+        <a class="btn btn-danger btn-flex" style="width:200px" href="/">Home</a><br>
+    </form>
+    </div>
+</body>
+</html>

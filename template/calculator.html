@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="static/css/styles.css">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="{% static 'jquery/jquery.min.js' %}"></script>
+</head>
+<body>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .calculator {
+    background-color: #333;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    width: 300px;
+  }
+  
+  .display {
+    margin-bottom: 20px;
+  }
+  
+  #result {
+    width: 100%;
+    height: 50px;
+    font-size: 24px;
+    text-align: right;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #444;
+    color: #fff;
+  }
+  
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  
+  button {
+    padding: 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #555;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #666;
+  }
+  
+  button.operator {
+    background-color: #f39c12;
+  }
+  
+  button.operator:hover {
+    background-color: #e67e22;
+  }
+  
+  button.equals {
+    grid-column: span 1;
+    background-color: #2ecc71;
+  }
+  
+  button.equals:hover {
+    background-color: #27ae60;
+  }
+  
+  button.zero {
+    grid-column: span 2;
+  }
+    </style>
+  <div class="calculator">
+    <div class="display">
+      <input type="text" id="result" readonly>
+    </div>
+    <div class="buttons">
+      <button onclick="clearDisplay()" class="operator">C</button>
+      <button onclick="deleteLast()" class="operator">DEL</button>
+      <button onclick="appendOperator('/')" class="operator">/</button>
+      <a><button onclick="appendOperator('*')" class="operator">*</button></a>
+
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <a><button onclick="appendOperator('-')" class="operator">-</button></a>
+
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <a><button onclick="appendOperator('+')" class="operator">+</button></a>
+
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <a><button onclick="calculateResult()" class="equals">=</button></a>
+
+      <button onclick="appendNumber('0')" class="zero">0</button>
+      <a><button onclick="appendNumber('.')">.</button></a>
+      <a class="btn btn-danger btn-flex" style="width:60px" href="/">Home</a>
+
+
+    </div>
+  </div><br>
+
+
+  <script>
+    // Get the display element
+const display = document.getElementById('result');
+
+// Function to append numbers to the display
+function appendNumber(number) {
+  display.value += number;
+}
+
+// Function to append operators to the display
+function appendOperator(operator) {
+  const lastChar = display.value.slice(-1);
+  if (['+', '-', '*', '/'].includes(lastChar)) {
+    // Replace the last operator if one exists
+    display.value = display.value.slice(0, -1) + operator;
+  } else {
+    display.value += operator;
+  }
+}
+
+// Function to clear the display
+function clearDisplay() {
+  display.value = '';
+}
+
+// Function to delete the last character
+function deleteLast() {
+  display.value = display.value.slice(0, -1);
+}
+
+// Function to calculate the result
+function calculateResult() {
+  try {
+    const result = eval(display.value); // Use eval to calculate the expression
+    display.value = result;
+  } catch (error) {
+    display.value = 'Error';
+  }
+}
+  </script>
+  
+</body>
+</html>

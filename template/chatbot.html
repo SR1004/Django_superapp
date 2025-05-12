@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chatbox { width: 50%; margin: 20px auto; border: 1px solid #ccc; padding: 10px; }
+        .message { padding: 8px; margin: 5px; border-radius: 5px; }
+        .user { background-color: #daf7a6; text-align: right; }
+        .bot { background-color: #f0f0f0; text-align: left; }
+    </style>
+</head>
+<body>
+    <h2>Django Chatbot</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+    <button onclick="sendMessage()">Send</button>
+    <button class="btn btn-danger btn-flex" style="width:200px" onclick="window.location.href = '/';">Home</button>
+
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            if (!userInput.trim()) return;
+
+            var chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += `<div class='message user'>You: ${userInput}</div>`;
+            document.getElementById("userInput").value = "";
+
+            fetch("", {
+                method: "POST",
+                headers: { "X-CSRFToken": getCookie("csrftoken"), "Content-Type": "application/x-www-form-urlencoded" },
+                body: `message=${userInput}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatbox.innerHTML += `<div class='message bot'>Bot: ${data.reply}</div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.split("=")[1]);
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
